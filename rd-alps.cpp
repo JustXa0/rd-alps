@@ -27,6 +27,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // TODO: Place code here.
 
+    enumerate temp = enumerate();
+    std::cout << temp.number();
+
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_RDALPS, szWindowClass, MAX_LOADSTRING);
