@@ -1,10 +1,10 @@
 #include "integerWriter.h"
 
-void integerWriter::intWrite(HDC hdc, HWND hWnd, int num, int r, int g, int b)
+void integerWriter::intWrite(int num, int R, int G, int B)
 {
 
         // Set the text color and background color
-        SetTextColor(hdc, RGB(0, 0, 0)); // Black color
+        SetTextColor(hdc, RGB(R, G, B)); // Black color
         SetBkMode(hdc, TRANSPARENT);    // Transparent background
 
         // Define the integer to be printed
@@ -23,4 +23,10 @@ void integerWriter::intWrite(HDC hdc, HWND hWnd, int num, int r, int g, int b)
         // Draw the integer on the screen
         DrawTextW(hdc, buffer, -1, &clientRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
+}
+
+integerWriter::integerWriter(HDC uHdc, HWND uHWnd)
+{
+    hdc = uHdc;
+    hWnd = uHWnd;
 }

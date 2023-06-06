@@ -150,11 +150,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
 
-        textWriter write = textWriter();
-        write.write(hdc, hWnd, "Hello, World!", 100, 50, 75);
+        textWriter write = textWriter(hdc, hWnd);
+        write.write("Hello, World!", 100, 50, 75);
 
-        integerWriter intWrite = integerWriter();
-        intWrite.intWrite(hdc, hWnd, 123, 100, 50, 85);
+        integerWriter intWrite = integerWriter(hdc, hWnd);
+        intWrite.intWrite(123, 100, 50, 85);
         
 
         EndPaint(hWnd, &ps);

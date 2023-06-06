@@ -3,8 +3,13 @@
 #include <cwchar>
 class integerWriter
 {
+private:
+	HDC hdc;
+	HWND hWnd;
+
 public:
-	void intWrite(HDC hdc, HWND hWnd, int num, int r, int g, int b);
+	void intWrite(int num, int r, int g, int b);
+	integerWriter(HDC uHdc, HWND uHWnd);
 
 };
 

@@ -3,8 +3,13 @@
 #include <string>
 class textWriter
 {
+private: 
+	HDC hdc;
+	HWND hWnd;
+	
 
 public: 
-	void write(HDC hdc, HWND hWnd, std::string message, int R, int G, int B);
+	void write(std::string message, int R, int G, int B);
+	textWriter(HDC uHdc, HWND uHWnd);
 };
 

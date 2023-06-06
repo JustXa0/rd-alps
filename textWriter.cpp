@@ -1,6 +1,13 @@
 #include "textWriter.h"
 
-void textWriter::write(HDC hdc, HWND hWnd, std::string message, int R, int G, int B) {
+textWriter::textWriter(HDC uHdc, HWND uHWnd) 
+{
+	hdc = uHdc;
+	hWnd = uHWnd;
+}
+
+void textWriter::write(std::string message, int R, int G, int B) 
+{
 	SetTextColor(hdc, RGB(R, G, B));
 	SetBkMode(hdc, TRANSPARENT);
 	size_t bufferSize = 0;
