@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include "rd-alps.h"
+#include "integerWriter.h"
 
 #define MAX_LOADSTRING 100
 
@@ -152,6 +153,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         textWriter write = textWriter();
         write.write(hdc, hWnd, "Hello, World!", 100, 50, 75);
 
+        integerWriter intWrite = integerWriter();
+        intWrite.intWrite(hdc, hWnd, 123, 100, 50, 85);
         
 
         EndPaint(hWnd, &ps);
