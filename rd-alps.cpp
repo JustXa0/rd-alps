@@ -27,8 +27,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // TODO: Place code here.
 
-    enumerate temp = enumerate();
-    std::cout << temp.number();
+
 
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -146,13 +145,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Add any drawing code that uses hdc here...
-            EndPaint(hWnd, &ps);
-        }
-        break;
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hWnd, &ps);
+
+        textWriter write = textWriter();
+        write.write(hdc, hWnd, "Hello, World!", 100, 50, 75);
+
+        
+
+        EndPaint(hWnd, &ps);
+    }
+    break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

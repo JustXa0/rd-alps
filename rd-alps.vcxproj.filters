@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Display">
       <UniqueIdentifier>{fe64e98a-b571-469e-b7ad-f21ffd6aa172}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Text">
+      <UniqueIdentifier>{80e3ebae-8030-47e0-93cc-040d498dfe4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -33,6 +36,9 @@
     <ClInclude Include="enumerate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="textWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="rd-alps.cpp">
@@ -40,6 +46,9 @@
     </ClCompile>
     <ClCompile Include="enumerate.cpp">
       <Filter>Source Files\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="textWriter.cpp">
+      <Filter>Source Files\Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

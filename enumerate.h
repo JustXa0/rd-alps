@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include <iostream>
 
 class enumerate
 {
@@ -8,9 +9,7 @@ private:
 	
 
 public:
-	int numMonitor() {
-		return GetSystemMetrics(SM_CMONITORS);
-	}
+	int numMonitor();
 
 
 };
