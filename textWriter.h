@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <string>
+
 class textWriter
 {
 private: 
@@ -10,6 +11,7 @@ private:
 
 public: 
 	void write(std::string message, int R, int G, int B);
+	void write(std::string message, int R, int G, int B, int x, int y);
 	textWriter(HDC uHdc, HWND uHWnd);
 };
 

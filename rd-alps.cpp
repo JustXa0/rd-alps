@@ -3,7 +3,6 @@
 
 #include "framework.h"
 #include "rd-alps.h"
-#include "integerWriter.h"
 
 #define MAX_LOADSTRING 100
 
@@ -11,6 +10,7 @@
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+HWND  hCursorPosLabel = nullptr;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -126,8 +126,21 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+
     switch (message)
     {
+    case WM_CREATE:
+    {
+        HWND hToolbar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
+            WS_CHILD | WS_VISIBLE | TBSTYLE_FLAT, 0, 0, 0, 0,
+            hWnd, NULL, hInst, NULL);
+        hCursorPosLabel = CreateWindowEx(0, L"STATIC", L"Cursor Position: ",
+            WS_CHILD | WS_VISIBLE,
+            10, 10, 150, 20,
+            hToolbar, NULL, hInst, NULL);
+
+    }
+    break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -151,10 +164,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         HDC hdc = BeginPaint(hWnd, &ps);
 
         textWriter write = textWriter(hdc, hWnd);
-        write.write("Hello, World!", 100, 50, 75);
+        write.write("Hello, World!", 100, 50, 75, 56, 180);
 
         integerWriter intWrite = integerWriter(hdc, hWnd);
-        intWrite.intWrite(123, 100, 50, 85);
+        intWrite.intWrite(10, 100, 100, 100, 73, 152);
+
+        
+        MonitorInfoManager monitor = MonitorInfoManager();
+        monitor.updateInfo();
+
+        //write.write(monitor.getMonitorName(0), 100, 50, 75);
+        
         
 
         EndPaint(hWnd, &ps);
@@ -164,6 +184,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
+
+    case WM_MOUSEMOVE:
+    {
+        POINT cursorPos;
+        GetCursorPos(&cursorPos);
+        ScreenToClient(hWnd, &cursorPos);
+        std::wstring cursorPosStr = L"X: " + std::to_wstring(cursorPos.x) + L", Y: " + std::to_wstring(cursorPos.y);
+        SetWindowText(hCursorPosLabel, cursorPosStr.c_str());
+    }
+    break;
+
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

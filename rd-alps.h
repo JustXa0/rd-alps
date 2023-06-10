@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
 #include "resource.h"
-#include "enumerate.h"
+#include "monitorInfoManager.h"
 #include "textWriter.h"
+#include "integerWriter.h"

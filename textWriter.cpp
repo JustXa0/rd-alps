@@ -34,3 +34,17 @@ void textWriter::write(std::string message, int R, int G, int B)
 	delete[] destinationBuffer;
 
 }
+
+void textWriter::write(std::string message, int R, int G, int B, int x, int y)
+{
+	SetTextColor(hdc, RGB(R, G, B));
+	SetBkMode(hdc, TRANSPARENT);
+	size_t bufferSize = 0;
+	mbstowcs_s(&bufferSize, nullptr, 0, message.c_str(), 0);
+
+	wchar_t* destinationBuffer = new wchar_t[bufferSize];
+
+	mbstowcs_s(nullptr, destinationBuffer, bufferSize, message.c_str(), bufferSize);
+
+	TextOut(hdc, x, y, destinationBuffer, lstrlen(destinationBuffer));
+}

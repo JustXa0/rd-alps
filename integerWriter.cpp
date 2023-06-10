@@ -4,15 +4,12 @@ void integerWriter::intWrite(int num, int R, int G, int B)
 {
 
         // Set the text color and background color
-        SetTextColor(hdc, RGB(R, G, B)); // Black color
-        SetBkMode(hdc, TRANSPARENT);    // Transparent background
-
-        // Define the integer to be printed
-        int number = 42;
-
+        SetTextColor(hdc, RGB(R, G, B));
+            // Transparent background
+        
         // Format the integer into a string
         wchar_t buffer[10];
-        swprintf_s(buffer, L"%d", number);
+        swprintf_s(buffer, L"%d", num);
 
         // Calculate the position for displaying the integer
         RECT clientRect;
@@ -23,6 +20,17 @@ void integerWriter::intWrite(int num, int R, int G, int B)
         // Draw the integer on the screen
         DrawTextW(hdc, buffer, -1, &clientRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
+}
+
+void integerWriter::intWrite(int num, int R, int G, int B, int x, int y)
+{
+    SetTextColor(hdc, RGB(R, G, B));
+    SetBkMode(hdc, TRANSPARENT);
+
+    wchar_t buffer[10];
+    swprintf_s(buffer, L"%d", num);
+
+    TextOut(hdc, x, y, buffer, lstrlen(buffer));
 }
 
 integerWriter::integerWriter(HDC uHdc, HWND uHWnd)

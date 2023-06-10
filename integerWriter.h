@@ -8,7 +8,8 @@ private:
 	HWND hWnd;
 
 public:
-	void intWrite(int num, int r, int g, int b);
+	void intWrite(int num, int R, int G, int B);
+	void intWrite(int num, int R, int G, int B, int x, int y);
 	integerWriter(HDC uHdc, HWND uHWnd);
 
 };

@@ -13,14 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Display">
-      <UniqueIdentifier>{fe64e98a-b571-469e-b7ad-f21ffd6aa172}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Text">
       <UniqueIdentifier>{80e3ebae-8030-47e0-93cc-040d498dfe4b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Integer">
       <UniqueIdentifier>{35bdba40-f431-4516-b096-f68b9d1518c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Display">
+      <UniqueIdentifier>{8315f6d5-ac7f-4236-848a-f983ffc68b09}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,13 +36,13 @@
     <ClInclude Include="rd-alps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="enumerate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="textWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="integerWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="monitorInfoManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,14 +50,14 @@
     <ClCompile Include="rd-alps.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="enumerate.cpp">
-      <Filter>Source Files\Display</Filter>
-    </ClCompile>
     <ClCompile Include="textWriter.cpp">
       <Filter>Source Files\Text</Filter>
     </ClCompile>
     <ClCompile Include="integerWriter.cpp">
       <Filter>Source Files\Integer</Filter>
+    </ClCompile>
+    <ClCompile Include="monitorInfoManager.cpp">
+      <Filter>Source Files\Display</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

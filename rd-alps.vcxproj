@@ -127,17 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="enumerate.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="integerWriter.h" />
+    <ClInclude Include="monitorInfoManager.h" />
     <ClInclude Include="rd-alps.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="textWriter.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="enumerate.cpp" />
     <ClCompile Include="integerWriter.cpp" />
+    <ClCompile Include="monitorInfoManager.cpp" />
     <ClCompile Include="rd-alps.cpp" />
     <ClCompile Include="textWriter.cpp" />
   </ItemGroup>
