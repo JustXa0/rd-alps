@@ -9,7 +9,7 @@
 
 struct MonitorInfo
 {
-	std::wstring friendlyName;
+	std::vector<std::wstring> friendlyName;
 	RECT displayArea;
 	RECT workArea;
 };

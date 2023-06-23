@@ -30,6 +30,9 @@ void monitorInfoManager::RetrieveMonitorInfo(MonitorInfo& monitorInfo)
 	}
 
 	int len = paths.size();
+
+	
+
 	for (int i = 0; i < len; i++)
 	{
 		DISPLAYCONFIG_TARGET_DEVICE_NAME targetName = {};
@@ -44,7 +47,7 @@ void monitorInfoManager::RetrieveMonitorInfo(MonitorInfo& monitorInfo)
 			return;
 		}
 
-		monitorInfo.friendlyName = targetName.monitorFriendlyDeviceName;
+		monitorInfo.friendlyName.push_back(targetName.monitorFriendlyDeviceName);
 	}
 	
 }

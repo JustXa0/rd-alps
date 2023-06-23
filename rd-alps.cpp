@@ -244,8 +244,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         monitorInfoManager info = monitorInfoManager();
         info.update();
+        
+        write.write(info.monitorInfo.friendlyName[0], 100, 50, 75, 73, 124);
 
-        write.write(info.monitorInfo.friendlyName, 100, 50, 75, 73, 124);
+        //write.write(info.monitorInfo.friendlyName, 100, 50, 75, 73, 124);
 
 
 
