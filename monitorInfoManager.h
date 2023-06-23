@@ -2,26 +2,28 @@
 #include <Windows.h>
 #include <vector>
 #include <string>
-#include <setupapi.h>
-#include <devguid.h>
-#include <locale>
-#include <codecvt>
+#include <comdef.h>
+#include <Wbemidl.h>
 
-#pragma comment(lib, "Setupapi.lib")
+#pragma comment(lib, "wbemuuid.lib")
 
-struct monitorInfo {
-    std::string name;
-    RECT displayArea;
-    RECT workArea;
+struct MonitorInfo
+{
+	std::string friendlyName;
+	RECT displayArea;
+	RECT workArea;
 };
 
-class MonitorInfoManager {
+class monitorInfoManager
+{
 private:
-    static BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
-    static std::string GetMonitorModelName(HMONITOR hMonitor);
+	void RetrieveMonitorInfo(MonitorInfo& monitorInfo);
+	
 
 public:
-    std::vector<monitorInfo> monitorList;
-    void updateInfo();
-    std::string getMonitorName(int index);
+	MonitorInfo monitorInfo;
+	void update();
+
+
+
 };

@@ -5,18 +5,24 @@
 #include "rd-alps.h"
 
 #define MAX_LOADSTRING 100
+#define IDM_MY_SELECTION 1001
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
-WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
-HWND  hCursorPosLabel = nullptr;
+WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name  
+HWND hCursorPosLabel = NULL;
+bool isDragging = false;                        // boolean for dragging function
+POINT dragStartPos;                             // point for storing start
+bool isHovering = false;                        // boolean for storing hovering
+bool checked = true;                           // boolean for storing checks
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+HWND                CreateCursorPosLabel(HWND);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -27,7 +33,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: Place code here.
-
 
 
     // Initialize global strings
@@ -103,6 +108,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
+  
+   
+
    if (!hWnd)
    {
       return FALSE;
@@ -110,9 +118,35 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
+   ShowWindow(hCursorPosLabel, nCmdShow);
+   UpdateWindow(hCursorPosLabel);
+
 
    return TRUE;
 }
+
+HWND CreateCursorPosLabel(HWND hWnd)
+{
+    RECT rect;
+    GetClientRect(hWnd, &rect);
+
+    // Calculate the position for the label control at the bottom of the window
+    int xPos = rect.left;
+    int yPos = rect.bottom - 20;
+    int width = rect.right - rect.left;
+    int height = 20;
+
+    // Create the label control with WS_VISIBLE flag set to FALSE
+    HWND hLabel = CreateWindow(L"STATIC", NULL, WS_CHILD, xPos, yPos, width, height, hWnd, NULL, hInst, NULL);
+
+    // Set the label control's properties
+    SetWindowText(hLabel, L"CURSOR POSITION:");
+    SendMessage(hLabel, WM_SETFONT, reinterpret_cast<WPARAM>(GetStockObject(DEFAULT_GUI_FONT)), MAKELPARAM(TRUE, 0));
+
+    return hLabel;
+}
+
+
 
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -126,42 +160,74 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+   
 
     switch (message)
     {
     case WM_CREATE:
     {
-        HWND hToolbar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
-            WS_CHILD | WS_VISIBLE | TBSTYLE_FLAT, 0, 0, 0, 0,
-            hWnd, NULL, hInst, NULL);
-        hCursorPosLabel = CreateWindowEx(0, L"STATIC", L"Cursor Position: ",
-            WS_CHILD | WS_VISIBLE,
-            10, 10, 150, 20,
-            hToolbar, NULL, hInst, NULL);
+        hCursorPosLabel = CreateCursorPosLabel(hWnd);
+
+        HMENU hMenu = CreateMenu();
+        HMENU hSubMenu = CreatePopupMenu();
+
+        AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenu, L"Developer Settings");
+        AppendMenu(hSubMenu, MF_STRING, IDM_MY_SELECTION, L"Disable Cursor Position");
+        CheckMenuItem(hSubMenu, IDM_MY_SELECTION, MF_UNCHECKED);
+
+        SetMenu(hWnd, hMenu);
 
     }
     break;
     case WM_COMMAND:
+    {
+        int wmId = LOWORD(wParam);
+        // Parse the menu selections:
+        switch (wmId)
         {
-            int wmId = LOWORD(wParam);
-            // Parse the menu selections:
-            switch (wmId)
+        case IDM_ABOUT:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            break;
+        case IDM_EXIT:
+            DestroyWindow(hWnd);
+            break;
+        case IDM_MY_SELECTION:
+        {
+            HMENU hMenu = GetMenu(hWnd);
+            HMENU hSubMenu = GetSubMenu(hMenu, 0);
+            if (checked)
             {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
+                ModifyMenuW(hSubMenu, IDM_MY_SELECTION, MF_BYCOMMAND | MF_CHECKED, IDM_MY_SELECTION, L"Disable Cursor Position");
+                checked = false;
+                ShowWindow(hCursorPosLabel, SW_SHOW);
+            }
+            else {
+                ModifyMenuW(hSubMenu, IDM_MY_SELECTION, MF_BYCOMMAND | MF_UNCHECKED, IDM_MY_SELECTION, L"Enable Cursor Position");
+                checked = true;
+                ShowWindow(hCursorPosLabel, SW_HIDE);
             }
         }
-        break;
+            break;
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
+        }
+    }
+    break;
     case WM_PAINT:
     {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
+
+        // Calculate the cursor position
+        POINT cursorPos;
+        GetCursorPos(&cursorPos);
+        ScreenToClient(hWnd, &cursorPos);
+
+        // Format the cursor position text
+        std::wstring cursorPosStr = L"X: " + std::to_wstring(cursorPos.x) + L", Y: " + std::to_wstring(cursorPos.y);
+
+        // Update the cursor position text in the label control
+        SetWindowText(hCursorPosLabel, cursorPosStr.c_str());
 
         textWriter write = textWriter(hdc, hWnd);
         write.write("Hello, World!", 100, 50, 75, 56, 180);
@@ -169,15 +235,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         integerWriter intWrite = integerWriter(hdc, hWnd);
         intWrite.intWrite(10, 100, 100, 100, 73, 152);
 
-        
-        MonitorInfoManager monitor = MonitorInfoManager();
-        monitor.updateInfo();
 
-        //write.write(monitor.getMonitorName(0), 100, 50, 75);
         
-        
+
+        monitorInfoManager info = monitorInfoManager();
+        info.update();
+        write.write(info.monitorInfo.friendlyName, 100, 50, 75, 73, 124);
+
+
 
         EndPaint(hWnd, &ps);
+    }
+    break;
+
+    case WM_NCPAINT:
+    {
+        // Force the non-client area (including the border) to be repainted
+        DefWindowProc(hWnd, WM_NCPAINT, wParam, lParam);
+
+        // Repaint the client area to ensure the cursor position display is visible
+        RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
     }
     break;
 
@@ -190,10 +267,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         POINT cursorPos;
         GetCursorPos(&cursorPos);
         ScreenToClient(hWnd, &cursorPos);
+
+        RECT windowRect;
+        GetClientRect(hCursorPosLabel, &windowRect);
+
         std::wstring cursorPosStr = L"X: " + std::to_wstring(cursorPos.x) + L", Y: " + std::to_wstring(cursorPos.y);
         SetWindowText(hCursorPosLabel, cursorPosStr.c_str());
     }
     break;
+
+    case WM_SIZE:
+    {
+        // Adjust the tooltip position and size
+        RECT rect;
+        GetClientRect(hWnd, &rect);
+        int tooltipWidth = 200;
+        int tooltipHeight = 20;
+        int labelX = rect.left + 10;
+        int labelY = rect.bottom - tooltipHeight - 10;
+
+        // Set the tooltip window position and size
+        SetWindowPos(hCursorPosLabel, NULL, labelX, labelY, tooltipWidth, tooltipHeight, SWP_SHOWWINDOW);
+    }
 
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
