@@ -48,3 +48,10 @@ void textWriter::write(std::string message, int R, int G, int B, int x, int y)
 
 	TextOut(hdc, x, y, destinationBuffer, lstrlen(destinationBuffer));
 }
+
+void textWriter::write(std::wstring message, int R, int G, int B, int x, int y)
+{
+	SetTextColor(hdc, RGB(R, G, B));
+	SetBkMode(hdc, TRANSPARENT);
+	TextOut(hdc, x, y, message.c_str(), static_cast<int>(message.length()));
+}

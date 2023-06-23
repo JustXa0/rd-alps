@@ -10,8 +10,9 @@ private:
 	
 
 public: 
-	void write(std::string message, int R, int G, int B);
-	void write(std::string message, int R, int G, int B, int x, int y);
-	textWriter(HDC uHdc, HWND uHWnd);
+	void write(std::string, int, int, int);
+	void write(std::string, int, int, int, int, int);
+	void write(std::wstring, int, int, int, int, int);
+	textWriter(HDC, HWND);
 };
 
