@@ -223,6 +223,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         GetCursorPos(&cursorPos);
         ScreenToClient(hWnd, &cursorPos);
 
+        RECT rec;
+
+        SetRect(&rec, 10, 10, 100, 100);
+
         // Format the cursor position text
         std::wstring cursorPosStr = L"X: " + std::to_wstring(cursorPos.x) + L", Y: " + std::to_wstring(cursorPos.y);
 
@@ -235,12 +239,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         integerWriter intWrite = integerWriter(hdc, hWnd);
         intWrite.intWrite(10, 100, 100, 100, 73, 152);
 
-
+        
         
 
         monitorInfoManager info = monitorInfoManager();
         info.update();
+
         write.write(info.monitorInfo.friendlyName, 100, 50, 75, 73, 124);
+
+
 
 
 
