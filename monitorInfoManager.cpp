@@ -1,6 +1,6 @@
 #include "monitorInfoManager.h"
 
-void monitorInfoManager::RetrieveMonitorInfo(MonitorInfo& monitorInfo)
+bool monitorInfoManager::RetrieveMonitorFriendlyName(std::vector<std::wstring>& friendlyName)
 {
 	std::vector<DISPLAYCONFIG_PATH_INFO> paths;
 	std::vector<DISPLAYCONFIG_MODE_INFO> modes;
@@ -13,7 +13,7 @@ void monitorInfoManager::RetrieveMonitorInfo(MonitorInfo& monitorInfo)
 
 	if (isError)
 	{
-		return;
+		return false;
 	}
 
 	paths.resize(pathCount);
@@ -26,7 +26,7 @@ void monitorInfoManager::RetrieveMonitorInfo(MonitorInfo& monitorInfo)
 
 	if (isError)
 	{
-		return;
+		return false;
 	}
 
 	int len = paths.size();
@@ -44,15 +44,85 @@ void monitorInfoManager::RetrieveMonitorInfo(MonitorInfo& monitorInfo)
 
 		if (isError)
 		{
-			return;
+			return false;
 		}
 
-		monitorInfo.friendlyName.push_back(targetName.monitorFriendlyDeviceName);
+		friendlyName.push_back(targetName.monitorFriendlyDeviceName);
 	}
-	
+
+	return true;
 }
 
-void monitorInfoManager::update()
+bool monitorInfoManager::RetrieveMonitorWorkArea(std::vector<RECT>& workArea)
 {
-	RetrieveMonitorInfo(monitorInfo);
+	HMONITOR hMonitor = MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY);
+	MONITORINFOEX monitorInfo;
+	monitorInfo.cbSize = sizeof(MONITORINFOEX);
+
+	if (!GetMonitorInfo(hMonitor, &monitorInfo))
+	{
+		std::cout << "ERROR OCCURED FINDING PRIMARY HARDWARE HANDLE" << std::endl;
+		return false;
+	}
+
+	BOOL enumResult = EnumDisplayMonitors(nullptr, nullptr, [](HMONITOR hMonitor, HDC, LPRECT, LPARAM lParam) -> BOOL
+		{
+			MONITORINFOEX monitorInfo;
+			monitorInfo.cbSize = sizeof(MONITORINFOEX);
+			if (!GetMonitorInfo(hMonitor, &monitorInfo))
+			{
+				std::cout << "No additional monitors found" << std::endl;
+				return FALSE;
+			}
+
+			std::vector<RECT>& workArea = *reinterpret_cast<std::vector<RECT>*>(lParam);
+			workArea.push_back(monitorInfo.rcWork);
+			return TRUE;
+		}, reinterpret_cast<LPARAM>(&workArea));
+
+	if (!enumResult)
+	{
+		std::cout << "ERROR OCCURRED DURING MONITOR ENUMERATION" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool monitorInfoManager::RetrieveMonitorDisplayArea(std::vector<RECT>& displayArea)
+{
+	HMONITOR hMonitor = MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY);
+	MONITORINFOEX monitorInfo;
+	monitorInfo.cbSize = sizeof(MONITORINFOEX);
+
+	if (!GetMonitorInfo(hMonitor, &monitorInfo))
+	{
+		std::cout << "ERROR OCCURED FINDING PRIMARY HARDWARE HANDLE" << std::endl;
+		return false;
+	}
+
+	BOOL enumResult = EnumDisplayMonitors(nullptr, nullptr, [](HMONITOR hMonitor, HDC, LPRECT, LPARAM lParam) -> BOOL
+		{
+			MONITORINFOEX monitorInfo;
+			monitorInfo.cbSize = sizeof(MONITORINFOEX);
+			if (!GetMonitorInfo(hMonitor, &monitorInfo))
+			{
+				std::cout << "No additional monitors found" << std::endl;
+				return FALSE;
+			}
+
+			std::vector<RECT>& displayArea = *reinterpret_cast<std::vector<RECT>*>(lParam);
+		//	displayArea.push_back(monitorInfo.);
+			return TRUE;
+		}, reinterpret_cast<LPARAM>(&displayArea));
+
+	if (!enumResult)
+	{
+		std::cout << "ERROR OCCURRED DURING MONITOR ENUMERATION" << std::endl;
+		return false;
+	}
+
+	return true;
+
+	
 }

@@ -1,5 +1,7 @@
 #include "integerWriter.h"
 
+
+
 void integerWriter::intWrite(int num, int R, int G, int B)
 {
 
@@ -21,6 +23,7 @@ void integerWriter::intWrite(int num, int R, int G, int B)
         DrawTextW(hdc, buffer, -1, &clientRect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
 }
+
 
 void integerWriter::intWrite(int num, int R, int G, int B, int x, int y)
 {

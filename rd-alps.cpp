@@ -15,7 +15,8 @@ HWND hCursorPosLabel = NULL;
 bool isDragging = false;                        // boolean for dragging function
 POINT dragStartPos;                             // point for storing start
 bool isHovering = false;                        // boolean for storing hovering
-bool checked = true;                           // boolean for storing checks
+bool checked = true;                            // boolean for storing checks
+bool console = false;                           // boolean for storing console status
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -23,6 +24,8 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 HWND                CreateCursorPosLabel(HWND);
+void                OpenConsoleWindow();
+void                CloseConsoleWindow();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -166,10 +169,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
     {
+       
+
         hCursorPosLabel = CreateCursorPosLabel(hWnd);
 
         HMENU hMenu = CreateMenu();
         HMENU hSubMenu = CreatePopupMenu();
+        
 
         AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenu, L"Developer Settings");
         AppendMenu(hSubMenu, MF_STRING, IDM_MY_SELECTION, L"Disable Cursor Position");
@@ -243,13 +249,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
 
         monitorInfoManager info = monitorInfoManager();
-        info.update();
+        std::vector<std::wstring> monitorNames;
+        std::vector<RECT> workAreas;
+
+        info.RetrieveMonitorFriendlyName(monitorNames);
         
-        write.write(info.monitorInfo.friendlyName[0], 100, 50, 75, 73, 124);
+        info.RetrieveMonitorWorkArea(workAreas);
 
-        //write.write(info.monitorInfo.friendlyName, 100, 50, 75, 73, 124);
+        write.write(monitorNames[0], 100, 50, 75, 73, 124);
 
-
+        intWrite.intWrite(workAreas[0].right, 10, 100, 100, 56, 81);
+        intWrite.intWrite(workAreas[0].bottom, 10, 100, 100, 56, 93);
 
 
 
@@ -282,6 +292,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         std::wstring cursorPosStr = L"X: " + std::to_wstring(cursorPos.x) + L", Y: " + std::to_wstring(cursorPos.y);
         SetWindowText(hCursorPosLabel, cursorPosStr.c_str());
+        if (console)
+        {
+            std::wcout << L"X: " + std::to_wstring(cursorPos.x) + L", Y: " + std::to_wstring(cursorPos.y) << std::endl;
+        }
     }
     break;
 
@@ -297,6 +311,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         // Set the tooltip window position and size
         SetWindowPos(hCursorPosLabel, NULL, labelX, labelY, tooltipWidth, tooltipHeight, SWP_SHOWWINDOW);
+    }
+
+    case WM_KEYDOWN:
+    {
+        if (wParam == VK_OEM_3)
+        {
+            if (!console)
+            {
+                OpenConsoleWindow();
+                console = true;
+            }
+            else
+            {
+                CloseConsoleWindow();
+                console = false;
+            }
+        }
     }
 
     default:
@@ -322,4 +353,29 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         }        break;
     }
     return (INT_PTR)FALSE;
+}
+
+void OpenConsoleWindow()
+{
+
+    AllocConsole();
+
+    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    int fileDescriptor = _open_osfhandle(reinterpret_cast<intptr_t>(consoleHandle), _O_TEXT);
+    FILE* consoleFile = _fdopen(fileDescriptor, "w");
+    *stdout = *consoleFile;
+    setvbuf(stdout, nullptr, _IONBF, 0);
+
+    // Redirect stdout to the console
+    freopen_s(&consoleFile, "CONOUT$", "w", stdout);
+}
+
+void CloseConsoleWindow()
+{
+    // flush and close stdout
+    fflush(stdout);
+    fclose(stdout);
+
+    // free the console
+    FreeConsole();
 }

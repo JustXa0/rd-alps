@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <vector>
 #include <string>
+#include <iostream>
 #include <comdef.h>
 #include <Wbemidl.h>
 
@@ -10,19 +11,20 @@
 struct MonitorInfo
 {
 	std::vector<std::wstring> friendlyName;
-	RECT displayArea;
-	RECT workArea;
+	std::vector<RECT> displayArea;
+	std::vector<RECT> workArea;
 };
 
 class monitorInfoManager
 {
 private:
-	void RetrieveMonitorInfo(MonitorInfo& monitorInfo);
+	
 	
 
 public:
-	MonitorInfo monitorInfo;
-	void update();
+	bool RetrieveMonitorFriendlyName(std::vector<std::wstring>& friendlyName);
+	bool RetrieveMonitorDisplayArea(std::vector<RECT>& displayArea);
+	bool RetrieveMonitorWorkArea(std::vector<RECT>& workArea);
 
 
 
